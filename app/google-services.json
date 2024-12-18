@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "154019801211",
+    "project_id": "hihotel-db3df",
+    "storage_bucket": "hihotel-db3df.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:154019801211:android:225e8f8e803119e6ba5ade",
+        "android_client_info": {
+          "package_name": "com.example.hihotel"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBEaCCG0b5u9NFnMQdyXCQIUWKjaUo9Los"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

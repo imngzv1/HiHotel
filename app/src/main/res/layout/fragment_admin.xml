@@ -1,0 +1,47 @@
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
+    <ImageView
+        android:id="@+id/image"
+        android:layout_width="150dp"
+        android:layout_height="100dp"
+        android:src="@drawable/img"
+        android:layout_marginBottom="15dp"
+        android:layout_gravity="center"/>
+    <EditText
+        android:id="@+id/roomName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Название комнаты"
+        android:inputType="text" />
+
+    <EditText
+        android:id="@+id/roomDescription"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Описание"
+        android:inputType="text" />
+
+    <EditText
+        android:id="@+id/roomPrice"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Цена"
+        android:inputType="numberDecimal" />
+
+    <Button
+        android:id="@+id/addRoomButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Добавить комнату"
+        android:layout_gravity="center" />
+    <Button
+        android:id="@+id/uploadImageButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Прикрепить фото комнаты"
+        android:layout_gravity="center" />
+</LinearLayout>
