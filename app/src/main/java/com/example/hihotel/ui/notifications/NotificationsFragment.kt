@@ -9,6 +9,7 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.hihotel.databinding.FragmentNotificationsBinding
+import com.google.firebase.auth.FirebaseAuth
 
 class NotificationsFragment : Fragment() {
 
@@ -28,17 +29,20 @@ private val binding: FragmentNotificationsBinding by lazy {
         super.onViewCreated(view, savedInstanceState)
 
         val userStatus = getUserStatus()  // "admin" или "user"
+        val currentUser = FirebaseAuth.getInstance().currentUser
+        val email = currentUser?.email ?: "Неизвестный пользователь"
+
+        binding.etUsername.text = "Ваша почта: $email"
 
         if (userStatus == "admin") {
             binding.profileName.text = "Администратор:Имангазиев Ислам"  // Имя администратора
             binding.profilePhone.text = "Телефон: +996500011100"
-            binding.profileRole.text = "Роль: Администратор"
         } else {
-            binding.profileName.text = "Пользователь"
+            binding.profileName.text = "Клиент"
             binding.profilePhone.text = "Телефон: +99779445939"
-            binding.profileRole.text = "Роль: Пользователь"
         }
     }
+
     private fun getUserStatus(): String? {
         val sharedPreferences =
             requireContext().getSharedPreferences("user_pref", Context.MODE_PRIVATE)

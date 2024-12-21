@@ -14,23 +14,25 @@
         android:text="Добро пожаловать в HiHotel"
         android:textColor="@color/black"
         android:gravity="center"/>
+
     <ImageView
         android:layout_width="150dp"
         android:layout_height="100dp"
         android:src="@drawable/img"
         android:layout_marginBottom="100dp"/>
+
     <TextView
         android:id="@+id/tv_login"
         android:textSize="20dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Введите логин и пароль"
+        android:text="Введите почту и пароль"
         android:layout_marginBottom="10dp"/>
     <EditText
         android:id="@+id/et_username"
         android:layout_width="200dp"
         android:layout_height="wrap_content"
-        android:hint="Логин"
+        android:hint="Почта"
         android:inputType="text"/>
 
     <EditText
@@ -46,5 +48,19 @@
         android:layout_height="wrap_content"
         android:backgroundTint="@color/orange"
         android:text="Войти" />
+    <TextView
+        android:id="@+id/tv_auth"
+        android:textSize="15sp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Нет учетной записи? Зарегистрируйтесь"
+        android:layout_marginBottom="10dp"/>
+
+    <Button
+        android:id="@+id/btn_auth"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@color/orange"
+        android:text="Регистрация" />
 
 </LinearLayout>

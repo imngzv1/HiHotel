@@ -1,0 +1,44 @@
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/card_background"
+    android:backgroundTint="@color/orange_red"
+    android:padding="8dp">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Вы забронировали комнату: "
+        android:textColor="@color/white"
+        android:textSize="20sp"
+        android:paddingTop="10dp"
+        android:paddingStart="15dp"
+        android:layout_marginBottom="4dp" />
+    <TextView
+        android:id="@+id/tvRoomId"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Room ID"
+        android:textSize="18sp"
+        android:textColor="@color/white"
+        android:paddingStart="15dp"
+        android:layout_marginBottom="4dp" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="На дату: "
+        android:textSize="20sp"
+        android:textColor="@color/white"
+        android:paddingStart="15dp"
+        android:layout_marginBottom="4dp" />
+    <TextView
+        android:id="@+id/tvDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Date"
+        android:textColor="@color/white"
+        android:paddingStart="15dp"
+        android:textSize="16sp" />
+</LinearLayout>

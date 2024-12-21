@@ -31,17 +31,18 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    private fun getUserStatus(): String? {
-        val sharedPreferences = getSharedPreferences("user_pref", Context.MODE_PRIVATE)
-        return sharedPreferences.getString("user_status", "user")
-    }
-
     fun updateAdminMenuVisibility() {
         val userStatus = getUserStatus()
         val menu = binding.navView.menu
         val adminFragment = menu.findItem(R.id.navigation_admin)
         adminFragment.isVisible = userStatus == "admin"
         binding.navView.invalidate()
+    }
+
+
+    private fun getUserStatus(): String? {
+        val sharedPreferences = getSharedPreferences("user_pref", Context.MODE_PRIVATE)
+        return sharedPreferences.getString("user_status", "user")
     }
 
 

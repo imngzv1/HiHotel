@@ -6,18 +6,20 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.hihotel.databinding.FragmentHomeBinding
 import com.example.hihotel.ui.Room
-import com.example.hihotel.ui.dashboard.DashboardFragment
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.storage.FirebaseStorage
 import java.util.Calendar
+import org.apache.poi.ss.usermodel.WorkbookFactory
+import org.apache.poi.xssf.usermodel.XSSFWorkbook
+import java.io.File
+import java.io.FileInputStream
+import java.io.FileOutputStream
 
 class HomeFragment : Fragment() {
 
@@ -26,6 +28,7 @@ class HomeFragment : Fragment() {
     }
     private lateinit var roomAdapter: RoomAdapter
     private val roomList = mutableListOf<Room>()
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -38,11 +41,10 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val userStatus = getUserStatus() // Получение статуса пользователя
+        val userStatus = getUserStatus()
 
         roomAdapter = RoomAdapter(roomList, { roomId ->
             if (userStatus == "admin") {
-                // Диалог для удаления комнаты
                 AlertDialog.Builder(requireContext())
                     .setTitle("Редактирование")
                     .setMessage("Вы хотите удалить комнату?")
@@ -61,27 +63,20 @@ class HomeFragment : Fragment() {
                     .setMessage("Вы хотите забронировать комнату?")
                     .setPositiveButton("Забронировать") { _, _ ->
                         showDatePicker { selectedDate ->
-                            saveRoomToPreferences(room, selectedDate)
-                            Toast.makeText(
-                                requireContext(),
-                                "Комната забронирована на $selectedDate",
-                                Toast.LENGTH_SHORT
-                            ).show()
+                            bookRoom(room,selectedDate)
                         }
                     }
                     .setNeutralButton("Отмена", null)
                     .show()
             }
 
-        })
+        },userStatus.toString())
 
         binding.rv.layoutManager = LinearLayoutManager(context)
         binding.rv.adapter = roomAdapter
 
         fetchRoomsFromFirestore() // Загрузка данных о комнатах
     }
-
-
     private fun getUserStatus(): String? {
         val sharedPreferences =
             requireContext().getSharedPreferences("user_pref", Context.MODE_PRIVATE)
@@ -106,18 +101,46 @@ class HomeFragment : Fragment() {
         )
         datePickerDialog.show()
     }
-
-
-    private fun saveRoomToPreferences(room: Room,date:String) {
-        val sharedPreferences =
-            requireContext().getSharedPreferences("booking_pref", Context.MODE_PRIVATE)
-        val editor = sharedPreferences.edit()
-        editor.putString("booked_room_name", room.name)
-        editor.putString("booked_room_price", room.price.toString())
-        editor.putString("booked_room_description", room.description)
-        editor.putString("room_id", room.id)
-        editor.putString("room_date", date)
-        editor.apply()
+    private fun bookRoom(room: Room, date: String) {
+        val userId = FirebaseAuth.getInstance().currentUser?.uid
+        if (userId != null) {
+            FirebaseFirestore.getInstance().collection("bookings")
+                .whereEqualTo("roomName", room.name)
+                .whereEqualTo("date", date)
+                .get()
+                .addOnSuccessListener { documents ->
+                    if (documents.isEmpty) {
+                        val booking = hashMapOf(
+                            "roomName" to room.name,
+                            "userId" to userId,
+                            "date" to date
+                            )
+                        FirebaseFirestore.getInstance().collection("bookings")
+                            .add(booking)
+                            .addOnSuccessListener {
+                                Toast.makeText(
+                                    requireContext(),
+                                    "Комната забронирована на $date",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                                createExcelFile()
+                            }
+                            .addOnFailureListener { e ->
+                                Toast.makeText(
+                                    requireContext(),
+                                    "Ошибка бронирования: ${e.message}",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
+                    } else {
+                        Toast.makeText(
+                            requireContext(),
+                            "Комната занята на $date, пожалуйста выберите другую дату.",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                }
+        }
     }
 
 
@@ -153,6 +176,66 @@ class HomeFragment : Fragment() {
                 ).show()
             }
     }
+    private fun createExcelFile() {
+        val firestore = FirebaseFirestore.getInstance()
+        firestore.collection("bookings")
+            .get()
+            .addOnSuccessListener { result ->
+                if (result.isEmpty) {
+                    Toast.makeText(requireContext(), "Нет бронирований для экспорта", Toast.LENGTH_SHORT).show()
+                    return@addOnSuccessListener
+                }
 
+                try {
+                    // Попытка найти существующий файл
+                    val fileName = "Bookings.xlsx"
+                    val file = requireContext().getExternalFilesDir(null)?.let {
+                        File(it, fileName)
+                    }
+
+                    val workbook: XSSFWorkbook
+                    val sheet: org.apache.poi.ss.usermodel.Sheet
+
+                    // Если файл существует, открываем его, иначе создаем новый
+                    if (file != null && file.exists()) {
+                        val fileInputStream = FileInputStream(file)
+                        workbook = WorkbookFactory.create(fileInputStream) as XSSFWorkbook
+                        sheet = workbook.getSheetAt(0) ?: workbook.createSheet("Бронирования")
+                    } else {
+                        workbook = XSSFWorkbook()  // Новый файл
+                        sheet = workbook.createSheet("Бронирования")
+                        // Создаем заголовки
+                        val headerRow = sheet.createRow(0)
+                        headerRow.createCell(0).setCellValue("Имя комнаты")
+                        headerRow.createCell(1).setCellValue("ID пользователя")
+                        headerRow.createCell(2).setCellValue("Дата")
+                    }
+
+                    // Находим следующую строку для добавления данных
+                    var rowIndex = sheet.lastRowNum + 1
+
+                    // Заполняем данными
+                    for (document in result) {
+                        val row = sheet.createRow(rowIndex++)
+                        row.createCell(0).setCellValue(document.getString("roomName") ?: "")
+                        row.createCell(1).setCellValue(document.getString("userId") ?: "")
+                        row.createCell(2).setCellValue(document.getString("date") ?: "")
+                    }
+
+                    // Сохраняем файл
+                    val fileOut = FileOutputStream(file)
+                    workbook.write(fileOut)
+                    fileOut.close()
+                    workbook.close()
+
+                    Toast.makeText(requireContext(), "Экспортировано: ${file?.absolutePath}", Toast.LENGTH_LONG).show()
+                } catch (e: Exception) {
+                    Toast.makeText(requireContext(), "Ошибка экспорта: ${e.message}", Toast.LENGTH_SHORT).show()
+                }
+            }
+            .addOnFailureListener { e ->
+                Toast.makeText(requireContext(), "Ошибка при загрузке данных: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
+    }
 
 }

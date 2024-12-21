@@ -37,11 +37,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Добавить комнату"
+        android:backgroundTint="@color/orange_red"
         android:layout_gravity="center" />
     <Button
         android:id="@+id/uploadImageButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Прикрепить фото комнаты"
+        android:text="Прикрепить фото"
+        android:backgroundTint="@color/orange_red"
         android:layout_gravity="center" />
 </LinearLayout>

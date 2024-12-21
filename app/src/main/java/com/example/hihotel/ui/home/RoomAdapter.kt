@@ -1,13 +1,14 @@
 package com.example.hihotel.ui.home
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.hihotel.databinding.ItemRoomBinding
 import com.example.hihotel.ui.Room
 
-class RoomAdapter(private val roomList: List<Room>, private val onDelete: (String) -> Unit,private val onSaveRoom: (Room) -> Unit) :
+class RoomAdapter(private val roomList: List<Room>, private val onDelete: (String) -> Unit,private val onSaveRoom: (Room) -> Unit,private val userStatus: String) :
     RecyclerView.Adapter<RoomAdapter.RoomViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RoomViewHolder {
@@ -23,14 +24,20 @@ class RoomAdapter(private val roomList: List<Room>, private val onDelete: (Strin
             onDelete(room.id)
             true
         }
-        holder.itemView.setOnClickListener {
-            onSaveRoom(room)
+        if (userStatus == "admin") {
+            holder.binding.bookButton.visibility = View.GONE
+        } else {
+            holder.binding.bookButton.visibility = View.VISIBLE
+            holder.binding.bookButton.setOnClickListener {
+                onSaveRoom(room)
+            }
         }
+
     }
 
     override fun getItemCount() = roomList.size
 
-    inner class RoomViewHolder(private val binding: ItemRoomBinding) :
+    inner class RoomViewHolder(val binding: ItemRoomBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(room: Room) {

@@ -10,7 +10,7 @@ android {
 
     defaultConfig {
         applicationId = "com.example.hihotel"
-        minSdk = 24
+        minSdk = 26
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
@@ -60,4 +60,7 @@ dependencies {
     implementation(libs.glide)
     annotationProcessor(libs.glideCompiler)
     implementation(libs.androidx.recyclerview)
+    implementation(libs.firebase.auth)
+    implementation(libs.apache.poi)
+
 }

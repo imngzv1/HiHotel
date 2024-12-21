@@ -16,6 +16,7 @@ firebase-bom = "33.7.0"
 google-services = "4.4.2"
 firebase-firestore = "25.1.1"
 firebase-storage = "21.0.1"
+firebase-auth ="22.1.1"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -36,6 +37,8 @@ firebase-storage={module = "com.google.firebase:firebase-storage",version.ref="f
 glide = { module = "com.github.bumptech.glide:glide", version = "4.16.0" }
 glideCompiler = { module = "com.github.bumptech.glide:compiler", version = "4.16.0" }
 androidx-recyclerview={module="androidx.recyclerview:recyclerview",version="1.3.2"}
+firebase-auth={group="com.google.firebase",name="firebase-auth",version.ref="firebase-auth"}
+apache_poi={group="org.apache.poi",name="poi-ooxml",version="5.2.3"}
 
 
 [plugins]

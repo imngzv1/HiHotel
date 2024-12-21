@@ -10,6 +10,13 @@
         android:name="com.example.hihotel.ui.login.LoginFragment"
         android:label="fragment_login"
         tools:layout="@layout/fragment_login" />
+
+    <fragment
+        android:id="@+id/authFragment"
+        android:name="com.example.hihotel.AuthFragment"
+        android:label="fragment_auth"
+        tools:layout="@layout/fragment_auth" />
+
     <fragment
         android:id="@+id/navigation_home"
         android:name="com.example.hihotel.ui.home.HomeFragment"
